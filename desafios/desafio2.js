@@ -61,8 +61,7 @@ class ProductManager{
         return;
     }
 
-        this.currentId++;
-        product.id = this.currentId;
+        product.id = this.currentId++;
         this.products.push(product);
         const respuesta = await this.saveFile(this.products);
         return respuesta;
@@ -81,22 +80,32 @@ class ProductManager{
         }
         console.error("Producto no encontrado");
     }
-//Actualizo un producto con el método updateProduct, que busca un producto con el id especificado y reemplaza ese producto con el nuevo producto en el array.
-    async updateProduct(id, newProduct) {
-        //busca en el array this.products el índice del producto cuyo id coincide con el id proporcionado. Si no se encuentra ningún producto, findIndex devuelve -1
-        const productIndex = this.products.findIndex(product => product.id === id);
-        //si productIndex es -1, significa que no se encontró ningún producto con el id proporcionado, por lo que se muestra un mensaje de error
-        if (productIndex === -1) {
-            console.error("Producto no encontrado");
-            return;
-        }
-        
-        //reemplaza el producto existente en el array this.products con el nuevo producto.
-        this.products[productIndex] = newProduct;
-        //guarda el array actualizado
-        const respuesta = await this.saveFile(this.products);
-        return respuesta;
+
+async updateProduct(id, newProduct) {
+    const productIndex = this.products.findIndex(product => product.id === id);
+    if (productIndex === -1) {
+        console.error("Producto no encontrado");
+        return;
     }
+
+    //newProdut verifica si el nuevo producto tiene un codigo ( que no sea null, undefined, nan o false). le metodo some this.products.some(...) lo que hace es recorrer cada elemento del array y aplicarle una función que le paso como argumento. Luego la funcion que pase por parametro toma un producto existente como argumento (existingProduct) y comprueba si el código de este producto es igual al código del nuevo producto (existingProduct.code === newProduct.code) y si el id de este producto es diferente al id proporcionado (existingProduct.id !== id). Si ambas condiciones son verdaderas, la función devuelve true entonces despues lo reemplaza
+    
+    if (newProduct.code && this.products.some(existingProduct => existingProduct.code === newProduct.code && existingProduct.id !== id)) {
+        console.error("El código del producto ya existe");
+        return;
+    }
+
+    // Reemplaza el producto existente en el array this.products con el nuevo producto, pero mantiene el id y el code del producto original.
+    this.products[productIndex] = { //es como si estuviera copiando todas las propiedades del producto existente en un nuevo objeto.
+        ...this.products[productIndex],
+        ...newProduct, // lo mismo que el anterior, pero con el nuevo producto
+        id: this.products[productIndex].id, //se asegura que el id quede igual 
+        code: this.products[productIndex].code // lo mismo que el id
+    };
+    
+    const respuesta = await this.saveFile(this.products);
+    return respuesta;
+}
     //elimino un producto con el método deleteProduct, que busca un producto con el id especificado y elimina ese producto del array.
     async deleteProduct(id) {
         const productIndex = this.products.findIndex(product => product.id === id);
@@ -130,37 +139,111 @@ const productManager = new ProductManager('./productos.json');
 // Llamo a getProducts, debe devolver un arreglo vacío
 console.log(productManager.getProducts()); //[]
 
-// Llamo a addProduct
-productManager.addProduct({
-    title: "Forastera de Diana Gabaldon",
-    description: "libro saga 1",
-    price: 11699,
-    thumbnail: "https://www.penguinlibros.com/ar/2133507-thickbox_default/forastera-saga-claire-randall-1.jpg",
-    code: "abc123",
-    stock: 5
-});
+//La palabra clave await solo puede usarse dentro de una función asíncrona porque si no me tira error!!!
+(async () => { 
+    // Llamo a addProduct
+    await productManager.addProduct({
+        title: "El duque y yo",
+        description: "libro Julia Quinn",
+        price: 11115,
+        thumbnail: "https://http2.mlstatic.com/D_NQ_NP_766649-MLA44209854761_112020-O.webp",
+        code: "abcd123",
+        stock: 5
+    });
 
-// Llamo a getProducts nuevamente, debe mostrar el producto recién agregado
-console.log(productManager.getProducts());
+    await productManager.addProduct({
+        title: "Forastera de Diana Gabaldon",
+        description: "libro saga 1",
+        price: 11699,
+        thumbnail: "https://www.penguinlibros.com/ar/2133507-thickbox_default/forastera-saga-claire-randall-1.jpg",
+        code: "abc123",
+        stock: 5
+    });
 
-// Llamo a getProductById
-console.log(productManager.getProductById(1));
+    await productManager.addProduct({
+        title: "Atrapada en el tiempo",
+        description: "libro saga 2",
+        price: 17.699,
+        thumbnail: "https://www.penguinlibros.com/ar/2133493-thickbox_default/atrapada-en-el-tiempo-saga-claire-randall-2.jpg",
+        code: "abc1234",
+        stock: 10
+    });
 
-// Llamo a updateProduct
-productManager.updateProduct(1, {
-    title: "Atrapada en el tiempo",
-    description: "libro saga 2",
-    price: 12349,
-    thumbnail: "https://www.penguinlibros.com/ar/2133493-thickbox_default/atrapada-en-el-tiempo-saga-claire-randall-2.jpg",
-    code: "abc1234",
-    stock: 10
-});
+    await productManager.addProduct({
+        title: "Viajera",
+        description: "libro saga 3",
+        price: 22.599,
+        thumbnail: "https://www.penguinlibros.com/ar/2133494-thickbox_default/viajera-saga-claire-randall-3.jpg",
+        code: "abc12345",
+        stock: 8
+    });
+    await productManager.addProduct({
+        title: "Tambores de otoño",
+        description: "libro saga 4",
+        price: 20.599,
+        thumbnail: "https://www.penguinlibros.com/ar/2133487-home_default/tambores-de-otono-saga-claire-randall-4.webp",
+        code: "ab123",
+        stock: 10
+    });
 
-// Llamo a getProducts para verificar que el producto se haya actualizado
-console.log(productManager.getProducts());
+    
+    await productManager.addProduct({
+        title: "La cruz ardiente",
+        description: "libro saga 5",
+        price: 23.599,
+        thumbnail: "https://www.penguinlibros.com/ar/2133484-home_default/la-cruz-ardiente-saga-outlander-5.webp",
+        code: "ab1234",
+        stock: 8
+    });
 
-// Llamo a deleteProduct
-productManager.deleteProduct(1);
+    await productManager.addProduct({
+        title: "Viento y ceniza",
+        description: "libro saga 6",
+        price: 21.899,
+        thumbnail: "https://www.penguinlibros.com/ar/2133501-home_default/viento-y-ceniza-saga-claire-randall-6.webp",
+        code: "ab12345",
+        stock: 6
+    });
 
-// Llamo a getProducts para verificar que el producto se haya eliminado
-console.log(productManager.getProducts());
+    await productManager.addProduct({
+        title: "Ecos del pasado",
+        description: "libro saga 7",
+        price: 19.399,
+        thumbnail: "https://www.penguinlibros.com/ar/2133502-home_default/ecos-del-pasado-saga-claire-randall-7.webp",
+        code: "a1234",
+        stock: 2
+    });
+
+    await productManager.addProduct({
+        title: "Harry Potter y el legado maldito",
+        description: "libro saga 8",
+        price: 22.099,
+        thumbnail: "https://www.penguinlibros.com/ar/2126891-thickbox_default/harry-potter-y-el-legado-maldito-harry-potter-8.jpg",
+        code: "a123",
+        stock: 7
+    });
+    // Llamo a getProducts nuevamente, debe mostrar el producto recién agregado
+    console.log(productManager.getProducts());
+
+    // Llamo a getProductById
+    console.log(productManager.getProductById(8));
+
+    // Llamo a updateProduct
+    await productManager.updateProduct(8, {
+        title: "Escrito con la sangre de mi corazon",
+        description: "libro saga 8",
+        price: 22.899,
+        thumbnail: "https://www.penguinlibros.com/ar/2133513-home_default/escrito-con-la-sangre-de-mi-corazon-saga-outlander-8.webp",
+        code: "a12345",
+        stock: 3
+    });
+
+    // Llamo a getProducts para verificar que el producto se haya actualizado
+    console.log(productManager.getProducts());
+
+    // Llamo a deleteProduct
+    await productManager.deleteProduct(1);
+
+    // Llamo a getProducts para verificar que el producto se haya eliminado
+    console.log(productManager.getProducts());
+})();
