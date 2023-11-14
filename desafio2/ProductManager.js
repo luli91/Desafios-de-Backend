@@ -15,9 +15,9 @@
 // Debe tener un método getProductById, el cual debe recibir un id, y tras leer el archivo, debe buscar el producto con el id especificado y devolverlo en formato objeto
 // Debe tener un método updateProduct, el cual debe recibir el id del producto a actualizar, así también como el campo a actualizar (puede ser el objeto completo, como en una DB), y debe actualizar el producto que tenga ese id en el archivo. NO DEBE BORRARSE SU ID 
 // Debe tener un método deleteProduct, el cual debe recibir un id y debe eliminar el producto que tenga ese id en el archivo.
-const fs = require ('fs')
+import fs from 'fs';
 
-class ProductManager{
+export default class ProductManager{
     constructor (path) {
         this.path = path;
         this.products = [];
@@ -68,7 +68,7 @@ class ProductManager{
     }
 //Obtengo todos los productos con el método getProducts, que devuelve el array de productos de la linea 23
     getProducts() {
-        console.log(this.products);
+        // console.log(this.products);
         return this.products;
     }
 //getProductById, busca un producto con el id especificado en el array.
@@ -122,6 +122,7 @@ async updateProduct(id, newProduct) {
     
 }
 
+
 class Product{
     constructor(title, description, price, thumbnail, code, stock) {
     this.title = title;
@@ -136,8 +137,8 @@ class Product{
 // Creo una instancia de la clase ProductManager
 const productManager = new ProductManager('./productos.json');
 
-// Llamo a getProducts, debe devolver un arreglo vacío
-console.log(productManager.getProducts()); //[]
+// // Llamo a getProducts, debe devolver un arreglo vacío
+// console.log(productManager.getProducts()); //[]
 
 //La palabra clave await solo puede usarse dentro de una función asíncrona porque si no me tira error!!!
 (async () => { 
@@ -215,6 +216,24 @@ console.log(productManager.getProducts()); //[]
     });
 
     await productManager.addProduct({
+        title: "50 sombras de grey",
+        description: "saga 1",
+        price: 26784,
+        thumbnail: "https://www.penguinlibros.com/ar/2131763-thickbox_default/cincuenta-sombras-de-grey-cincuenta-sombras-1.jpg",
+        code: "def123",
+        stock: 2
+    });
+
+    await productManager.addProduct({
+        title: "Cincuenta sombras liberadas",
+        description: "saga 2",
+        price: 15648,
+        thumbnail: "https://www.penguinlibros.com/ar/1648981-large_default/cincuenta-sombras-liberadas.webp",
+        code: "de123",
+        stock: 2
+    });
+
+    await productManager.addProduct({
         title: "Harry Potter y el legado maldito",
         description: "libro saga 8",
         price: 22.099,
@@ -223,10 +242,10 @@ console.log(productManager.getProducts()); //[]
         stock: 7
     });
     // Llamo a getProducts nuevamente, debe mostrar el producto recién agregado
-    console.log(productManager.getProducts());
+    // console.log(productManager.getProducts());
 
     // Llamo a getProductById
-    console.log(productManager.getProductById(8));
+    // console.log(productManager.getProductById(8));
 
     // Llamo a updateProduct
     await productManager.updateProduct(8, {
@@ -239,11 +258,11 @@ console.log(productManager.getProducts()); //[]
     });
 
     // Llamo a getProducts para verificar que el producto se haya actualizado
-    console.log(productManager.getProducts());
+    // console.log(productManager.getProducts());
 
     // Llamo a deleteProduct
     await productManager.deleteProduct(1);
 
     // Llamo a getProducts para verificar que el producto se haya eliminado
-    console.log(productManager.getProducts());
+    // console.log(productManager.getProducts());
 })();
