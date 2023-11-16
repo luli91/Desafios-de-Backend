@@ -20,18 +20,18 @@ const productManager = new ProductManager('desafio3/src/productos.json');
 app.use(express.urlencoded({ extended: true }));
 
 
-app.get('/products', async (req, res) => {
+app.get('/products', (req, res) => {
     const limit = req.query.limit;
-    let products = await productManager.getProducts();
+    let products = productManager.getProducts();
     if (limit) {
-        products = products.slice(0, limit);
+        products = products.slice(0, limit);//El método slice() devuelve una copia de una parte del array dentro de un nuevo array empezando por inicio hasta fin (fin no incluido). El array original no se modificará.
     }
     res.json(products);
 });
 
-app.get('/products/:pid', async (req, res) => {
+app.get('/products/:pid', (req, res) => {
     const pid = req.params.pid;
-    const product = await productManager.getProductById(Number(pid));
+    const product = productManager.getProductById(Number(pid));
     if (product) {
         res.json(product);
     } else {
