@@ -14,23 +14,24 @@ import ProductManager from '../../desafio2/ProductManager.js';
 const app = express ();
 const PORT = 8080;
 
-const productManager = new ProductManager('./productos.json');
+const productManager = new ProductManager('desafio3/src/productos.json');
+
 
 app.use(express.urlencoded({ extended: true }));
 
 
-app.get('/products', (req, res) => {
+app.get('/products', async (req, res) => {
     const limit = req.query.limit;
-    let products = productManager.getProducts();
+    let products = await productManager.getProducts();
     if (limit) {
         products = products.slice(0, limit);
     }
     res.json(products);
 });
 
-app.get('/products/:pid', (req, res) => {
+app.get('/products/:pid', async (req, res) => {
     const pid = req.params.pid;
-    const product = productManager.getProductById(Number(pid));
+    const product = await productManager.getProductById(Number(pid));
     if (product) {
         res.json(product);
     } else {

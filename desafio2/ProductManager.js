@@ -265,4 +265,4 @@ const productManager = new ProductManager('./productos.json');
 
     // Llamo a getProducts para verificar que el producto se haya eliminado
     // console.log(productManager.getProducts());
-})();
+});//(); funcion IIFE
