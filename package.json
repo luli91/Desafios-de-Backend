@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon desafio3/src/app.js",
     "dev:productManager": "nodemon desafio2/ProductManager.js",
     "dev:app": "nodemon desafio3/src/app.js"
   },
